@@ -1,0 +1,63 @@
+.board{
+    display: block;
+    margin-top: 1rem;
+    background-color: rgb(155, 153, 153);
+    width: 45%;
+    text-align: center;
+}
+
+.cards{
+    padding: 1rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    display:grid;
+    grid-template-columns: repeat(10, 1fr);
+    place-items: center;
+    place-self: center;
+    gap: 5px;
+
+}
+
+
+.heading1{
+    display: flex;
+    position: absolute;
+    font-weight: 400;
+    font-size: 3rem;
+    transform: translateX(-36%) translateY(45vh) rotate(90deg);
+}
+
+.heading2{
+    display: flex;
+    position: absolute;
+    font-weight: 400;
+    font-size: 3rem;
+    transform: translateX(250%) translateY(45vh) rotate(-90deg);
+}
+
+.one_card{
+    cursor: pointer;
+}
+
+.token_grid{
+    position: absolute;
+    margin-top: 1.5rem;
+    margin-left: 4rem;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    place-items: center;
+    place-self: center;
+    cursor: pointer;
+    width: 30%;
+}
+
+.token{
+    width: 4rem;
+    z-index: 999;
+}
+
+.token-row{
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+}
