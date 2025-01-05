@@ -4,9 +4,9 @@ import Game from './Components/Game'
 function App() {
   return (
     <div className='main'>
-      <div className='players'></div>
+      <div className='players'>Players</div>
       <Game players={8} />
-      <div className='your_cards'></div>
+      <div className='your_cards'>Your Cards</div>
     </div>
   )
 }
