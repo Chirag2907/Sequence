@@ -2,12 +2,12 @@ import * as deck from '@letele/playing-cards';
 import '../Styles/Game.css';
 import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
-import red_token from '../Assets/Red_Token.png';
-import blue_token from '../Assets/Blue_Token.png';
-import green_token from '../Assets/Green_Token.png';
-import empty_token from '../Assets/Empty.png';
+import red_token from '../assets/Red_Token.png';
+import blue_token from '../assets/Blue_Token.png';
+import green_token from '../assets/Green_Token.png';
+import empty_token from '../assets/Empty.png';
 import { ToastContainer, toast } from 'react-toastify';
-import { doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore';
 import { db } from "../Firebaseconfig";
 import { sequence_board } from '../sequence_board';
 import { GameContext } from '../context'; // Import the GameContext
