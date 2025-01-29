@@ -1,0 +1,15 @@
+.Your_cards_heading{
+    margin-top: 4rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+
+}
+
+.player-hand{
+    margin-left: 1.5rem;
+}
+
+.selected-card{
+    border: 2px solid yellow;
+    box-shadow: 0 0 10px yellow;
+  }

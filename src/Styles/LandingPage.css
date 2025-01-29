@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.on_top{
+  display: block;
+  z-index: 999;
+}
+
+.waiting-message {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+  max-width: 300px;
+}
+
+.sample-board-1 {
+  position: fixed;
+  left: -20rem;
+  top: -10rem;
+  height: 60rem;
+  transform: rotate(-25deg);
+  z-index: -1;
+}
+
+.sample-board-2 {
+  position: fixed;
+  right: -20rem;
+  bottom: -10rem;
+  height: 60rem;
+  transform: rotate(25deg);
+  z-index: -1;
+}
+
+.landing-page {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+  /* disable scrolling on this page */
+  height:100vh;
+  overflow: hidden;
+}
+
+.landing-title {
+  font-family: "Montserrat", serif;
+  font-size: 2rem;
+  color: #bfbfbf;
+  margin-top: 40%;
+  font-weight: 500;
+}
+
+.landing-sequence {
+  font-family: "Montserrat", serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.landing-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+.game-code-input {
+  margin-top: 10px;
+  margin-bottom: 15px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 300px;
+}
+
+.create-game-section, .join-game-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.player-select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  width: 320px;
+}
+
+.start-game-btn, .join-game-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  max-width: 320px;
+}
+
+.start-game-btn:hover, .join-game-btn:hover {
+  background-color: #218838;
+}

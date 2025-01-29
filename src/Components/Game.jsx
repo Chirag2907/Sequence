@@ -1,196 +1,249 @@
 import * as deck from '@letele/playing-cards';
-import './Game.css';
-import { useState } from 'react';
+import '../Styles/Game.css';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
-import red_token from '../Assets/Red_Token.png'
-import blue_token from '../Assets/Blue_Token.png'
-import green_token from '../Assets/Green_Token.png'
-import empty_token from '../Assets/Empty.png'
+import red_token from '../Assets/Red_Token.png';
+import blue_token from '../Assets/Blue_Token.png';
+import green_token from '../Assets/Green_Token.png';
+import empty_token from '../Assets/Empty.png';
 import { ToastContainer, toast } from 'react-toastify';
+import { doc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { db } from "../Firebaseconfig";
+import { sequence_board } from '../sequence_board';
+import { GameContext } from '../context'; // Import the GameContext
 
-const Game = ({players}) => {
+const Game = (props) => {
+  const [NumPlayers, setNumPlayers] = useState(0);
+  const [Turn, setTurn] = useState(0);
+  const [PlayerData, setPlayerData] = useState([]);
+  const [BoardMap, setBoardMap] = useState({});
+  const { selectedCard, setSelectedCard } = useContext(GameContext); // Access context
 
-    const teams = players%3==0?3:2;
+  const teams = NumPlayers % 3 === 0 ? 3 : 2;
+  const colors = ['red', 'blue', 'green'];
 
-    const [Index, setIndex] = useState(0);
+  const win = (color) => toast(`${color} Team Wins!`);
 
-    const colors = ['red', 'blue', 'green'];
+  const HandleCellClick = async (cell) => {
 
-    const sequence_board = [
-    [{card: 'J1', color: 'none'}, {card: 'C6-1', color: 'none'}, {card: 'C7-2', color: 'none'}, {card: 'C8-2', color: 'none'}, {card: 'C9-1', color: 'none'}, {card: 'C10-1', color: 'none'}, {card: 'Cq-2', color: 'none'}, {card: 'Ck-2', color: 'none'}, {card: 'Ca-2', color: 'none'}, {card: 'J1', color: 'none'}],
-    [{card: 'S2-1', color: 'none'}, {card: 'C5-1', color: 'none'}, {card: 'Sa-1', color: 'none'}, {card: 'Sk-1', color: 'none'}, {card: 'Sq-2', color: 'none'}, {card: 'S10-2', color: 'none'}, {card: 'S9-2', color: 'none'}, {card: 'S8-2', color: 'none'}, {card: 'S7-2', color: 'none'}, {card: 'Da-2', color: 'none'}],
-    [{card: 'S3-1', color: 'none'}, {card: 'C4-1', color: 'none'}, {card: 'D2-1', color: 'none'}, {card: 'C6-2', color: 'none'}, {card: 'C7-1', color: 'none'}, {card: 'C8-1', color: 'none'}, {card: 'C9-2', color: 'none'}, {card: 'C10-2', color: 'none'}, {card: 'S6-2', color: 'none'}, {card: 'Dk-2', color: 'none'}],
-    [{card: 'S4-1', color: 'none'}, {card: 'C3-1', color: 'none'}, {card: 'D3-1', color: 'none'}, {card: 'C5-2', color: 'none'}, {card: 'H6-1', color: 'none'}, {card: 'H7-2', color: 'none'}, {card: 'H8-2', color: 'none'}, {card: 'Cq-1', color: 'none'}, {card: 'S5-2', color: 'none'}, {card: 'Dq-1', color: 'none'}],
-    [{card: 'S5-1', color: 'none'}, {card: 'C2-1', color: 'none'}, {card: 'D4-1', color: 'none'}, {card: 'C4-2', color: 'none'}, {card: 'H5-1', color: 'none'}, {card: 'H2-1', color: 'none'}, {card: 'H9-2', color: 'none'}, {card: 'Ck-1', color: 'none'}, {card: 'S4-2', color: 'none'}, {card: 'D10-2', color: 'none'}],
-    [{card: 'S6-1', color: 'none'}, {card: 'Ha-1', color: 'none'}, {card: 'D5-1', color: 'none'}, {card: 'C3-2', color: 'none'}, {card: 'H4-1', color: 'none'}, {card: 'H3-1', color: 'none'}, {card: 'H10-2', color: 'none'}, {card: 'Ca-1', color: 'none'}, {card: 'S3-2', color: 'none'}, {card: 'D9-2', color: 'none'}],
-    [{card: 'S7-1', color: 'none'}, {card: 'Hk-1', color: 'none'}, {card: 'D6-1', color: 'none'}, {card: 'C2-2', color: 'none'}, {card: 'Ha-2', color: 'none'}, {card: 'Hk-2', color: 'none'}, {card: 'Hq-2', color: 'none'}, {card: 'Da-1', color: 'none'}, {card: 'S2-2', color: 'none'}, {card: 'D8-2', color: 'none'}],
-    [{card: 'S8-1', color: 'none'}, {card: 'Hq-1', color: 'none'}, {card: 'D7-1', color: 'none'}, {card: 'D8-1', color: 'none'}, {card: 'D9-1', color: 'none'}, {card: 'D10-1', color: 'none'}, {card: 'Dq-2', color: 'none'}, {card: 'Dk-1', color: 'none'}, {card: 'H2-2', color: 'none'}, {card: 'D7-2', color: 'none'}],
-    [{card: 'S9-1', color: 'none'}, {card: 'H10-1', color: 'none'}, {card: 'H9-1', color: 'none'}, {card: 'H8-1', color: 'none'}, {card: 'H7-1', color: 'none'}, {card: 'H6-2', color: 'none'}, {card: 'H5-2', color: 'none'}, {card: 'H4-2', color: 'none'}, {card: 'H3-2', color: 'none'}, {card: 'D6-2', color: 'none'}],
-    [{card: 'J1', color: 'none'}, {card: 'S10-1', color: 'none'}, {card: 'Sq-1', color: 'none'}, {card: 'Sk-2', color: 'none'}, {card: 'Sa-2', color: 'none'}, {card: 'D2-2', color: 'none'}, {card: 'D3-2', color: 'none'}, {card: 'D4-2', color: 'none'}, {card: 'D5-2', color: 'none'}, {card: 'J1', color: 'none'}]
-];
-
-    const [Board, setBoard] = useState(sequence_board);
-
-    const win = (color) => toast(`${color} Team Wins!`);
-
-    const WinCheck = (color, newBoard) => {        
-        // check rows
-        for (let i = 0; i < 10; i++) {
-            let count = 0;
-            for (let j = 0; j < 10; j++) {
-                if (newBoard[i][j].color === color) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-
-                if (count == 5) {
-                    return true;
-                }
-            }
-        }
-
-        // check columns
-        for (let i = 0; i < 10; i++) {
-            let count = 0;
-            for (let j = 0; j < 10; j++) {
-                if (newBoard[j][i].color === color) {
-                    count++;
-                } else {
-                    count = 0;
-                }
-
-                if (count === 5) {
-                    return true;
-                }
-            }
-        }
-
-        // check main diagonal
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 6; j++) {
-                let count = 0;
-                for (let k = 0; k < 5; k++) {
-                    if (newBoard[i + k][j + k].color === color) {
-                        count++;
-                    } else {
-                        count = 0;
-                    }
-
-                    if (count === 5) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        // check anti diagonal
-        for (let i = 0; i < 6; i++) {
-            for (let j = 4; j < 10; j++) {
-                let count = 0;
-                for (let k = 0; k < 5; k++) {
-                    if (newBoard[i + k][j - k].color === color) {
-                        count++;
-                    } else {
-                        count = 0;
-                    }
-
-                    if (count === 5) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+    const currentPlayer = PlayerData[Turn % NumPlayers]?.PlayerName;
+    
+    if (props.playername !== currentPlayer) {
+      toast.warn("It’s not your turn!");
+      return;
     }
 
-    const HandleCardClick = (card) => {
-        console.log(card)
-        const color = colors[Index%teams];
-        
-        const newBoard = Board.map((row) =>
-            row.map((cell) => {
-
-                if (cell.card === card && cell.color === 'none') {
-                    setIndex(Index + 1);
-                    return { ...cell, color: colors[Index%teams]};
-                }
-
-                return cell;
-            })
-        );
-
-        setBoard(newBoard);
-        if(WinCheck(color, newBoard)){
-            win(color);
-            setInterval(() => {
-                window.location.reload();
-            }
-            , 3000);
+    if (!selectedCard) {
+      toast.warn("No card selected! Please select a card first!");
+      return;
+    }
+  
+  
+  
+    const color = colors[Turn % teams];
+  
+    // Check if the cell is already occupied
+    if (BoardMap[cell]) {
+      toast.warn("This cell is already occupied!");
+      return;
+    }
+  
+    // Prepare updated board state
+    const updatedBoardMap = { ...BoardMap, [cell]: color };
+  
+    // Update player's hand and turn
+    const updatedPlayerData = PlayerData.map((player) => {
+      if (player.PlayerName === props.playername) {
+        const updatedHand = player.Player_hand.filter((card) => card !== selectedCard);
+        if (player.Card_idx < player.Player_deck.length) {
+          updatedHand.push(player.Player_deck[player.Card_idx]);
+          player.Card_idx += 1;
         }
-    };
+        return {
+          ...player,
+          Player_hand: updatedHand,
+          Last_card: selectedCard,
+        };
+      }
+      return player;
+    });
+  
+    const nextTurn = Turn + 1;
+  
+    // Push updates to Firestore atomically
+    try {
+      const gameDocRef = doc(db, "game", props.code);
+  
+      await updateDoc(gameDocRef, {
+        BoardMap: updatedBoardMap,
+        Turn: nextTurn, // Atomic update of Turn
+        Players: updatedPlayerData,
+      });
+  
+      setSelectedCard(null); // Reset selected card
+  
+      if (WinCheck(color, updatedBoardMap)) {
+        win(color);
+        setTimeout(() => {
+          updateDoc(gameDocRef, { Turn: -1 }); // Mark game as finished
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Error updating game state:", error);
+      toast.error("Failed to update game state.");
+    }
+  };
 
-    return (
-        <div>
-            <ToastContainer />
-            <div className="board">
-                <div className='heading1'>SEQUENCE</div>
-                
+  const WinCheck = (color, board) => {
+    // Win condition logic remains the same
+    // Check rows, columns, diagonals, and anti-diagonals for sequences of 5
+    for (let i = 0; i < 10; i++) {
+      let count = 0;
+      for (let j = 0; j < 10; j++) {
+        if (sequence_board[i][j] === 'J1') {
+          count++;
+        } else if (board[sequence_board[i][j]] === color) {
+          count++;
+        } else {
+          count = 0;
+        }
+        if (count === 5) return true;
+      }
+    }
 
-                <div className='grids'>
+    for (let i = 0; i < 10; i++) {
+      let count = 0;
+      for (let j = 0; j < 10; j++) {
+        if (sequence_board[j][i] === 'J1') {
+          count++;
+        } else if (board[sequence_board[j][i]] === color) {
+          count++;
+        } else {
+          count = 0;
+        }
+        if (count === 5) return true;
+      }
+    }
 
-                    <div className='token_grid'>
-                        {Board.map((row, rowIndex) => (
-                            <div key={rowIndex} className="token-row">
-                                {row.map((cell, cellIndex) => {
-                                    if (cell.color === 'red') {
-                                        return <img onClick={() => HandleCardClick(cell.card)} key={`${rowIndex}-${cellIndex}`} src={red_token} alt='red_token' className='token' />
-                                    } else if (cell.color === 'blue') {
-                                        return <img onClick={() => HandleCardClick(cell.card)} key={`${rowIndex}-${cellIndex}`} src={blue_token} alt='blue_token' className='token' />
-                                    } else if (cell.color === 'green') {
-                                        return <img onClick={() => HandleCardClick(cell.card)} key={`${rowIndex}-${cellIndex}`} src={green_token} alt='green_token' className='token' />
-                                    } else {
-                                        return <img onClick={() => HandleCardClick(cell.card)} key={`${rowIndex}-${cellIndex}`} src={green_token} alt='nothing' className='token' />
-                                    }
-                                })}
-                            </div>
-                        ))}
-                    </div>
+    for (let i = 0; i < 6; i++) {
+      for (let j = 0; j < 6; j++) {
+        let count = 0;
+        for (let k = 0; k < 5; k++) {
+          if (sequence_board[i + k][j + k] === 'J1') {
+            count++;
+          } else if (board[sequence_board[i + k][j + k]] === color) {
+            count++;
+          } else {
+            count = 0;
+          }
+          if (count === 5) return true;
+        }
+      }
+    }
 
-                    <div className="cards">
-                        {Board.map((row, rowIndex) => (
-                            <div key={rowIndex} className="row">
-                                {row.map((cell, cellIndex) => {
-                                    const cardName = cell.card.split('-')[0];
-                                    const CardComponent = deck[cardName];
+    for (let i = 0; i < 6; i++) {
+      for (let j = 4; j < 10; j++) {
+        let count = 0;
+        for (let k = 0; k < 5; k++) {
+          if (sequence_board[i + k][j - k] === 'J1') {
+            count++;
+          } else if (board[sequence_board[i + k][j - k]] === color) {
+            count++;
+          } else {
+            count = 0;
+          }
+          if (count === 5) return true;
+        }
+      }
+    }
 
-                                    return (
-                                        <CardComponent
-                                            key={`${rowIndex}-${cellIndex}`}
-                                            onClick={() => HandleCardClick(cell.card)}
-                                            className="one_card"
-                                            style={{ height: '100%', width: '100%' }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        ))}
-                    </div>
+    return false;
+  };
 
+  useEffect(() => {
+    const gameDocRef = doc(db, 'game', props.code);
+    const unsubscribe = onSnapshot(gameDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const gameData = docSnap.data();
+        setBoardMap(gameData.BoardMap);
+        setTurn(gameData.Turn);
+        setNumPlayers(gameData.numPlayers)
+        setPlayerData(gameData.Players || []);
+      } else {
+        console.error('Game document does not exist');
+      }
+    });
 
-                </div>
+    return () => unsubscribe();
+  }, [props.code]);
 
-                <div className='heading2'>SEQUENCE</div>
-            </div>
+  
+
+  return (
+    <div>
+      <ToastContainer />
+      <div className="board">
+        <div className="heading1">SEQUENCE</div>
+
+        <div className="grids">
+          <div className="token_grid">
+            {sequence_board.map((row, rowIndex) => (
+              <div key={rowIndex} className="token-row">
+                {row.map((cell, cellIndex) => {
+                  const cellColor = BoardMap[cell];
+                  const tokenImage =
+                    cellColor === 'red'
+                      ? red_token
+                      : cellColor === 'blue'
+                      ? blue_token
+                      : cellColor === 'green'
+                      ? green_token
+                      : empty_token;
+
+                  return (
+                    <img
+                      key={`${rowIndex}-${cellIndex}`}
+                      src={tokenImage}
+                      alt="token"
+                      className="token"
+                      onClick={() => HandleCellClick(cell)}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+
+          <div className="cards">
+            {sequence_board.map((row, rowIndex) => (
+              <div key={rowIndex} className="row">
+                {row.map((cell, cellIndex) => {
+                  const cardName = cell.split('-')[0];
+                  const CardComponent = deck[cardName];
+
+                  return (
+                    <CardComponent
+                      key={`${rowIndex}-${cellIndex}`}
+                      className="one_card"
+                      style={{ height: '100%', width: '100%' }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
-        
-        
-    );
+
+        <div className="heading2">SEQUENCE</div>
+      </div>
+    </div>
+  );
 };
 
 Game.propTypes = {
-    players: PropTypes.number.isRequired,
+  players: PropTypes.number.isRequired,
+  code: PropTypes.string.isRequired,
+  playername: PropTypes.string.isRequired,
 };
 
 export default Game;
