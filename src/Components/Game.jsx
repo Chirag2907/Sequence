@@ -84,9 +84,7 @@ const Game = (props) => {
   
       if (WinCheck(color, updatedBoardMap)) {
         win(color);
-        setTimeout(() => {
-          updateDoc(gameDocRef, { Turn: -1 }); // Mark game as finished
-        }, 3000);
+        updateDoc(gameDocRef, { Deck: [] });
       }
     } catch (error) {
       console.error("Error updating game state:", error);
