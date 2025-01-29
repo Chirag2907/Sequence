@@ -13,3 +13,24 @@
     border: 2px solid yellow;
     box-shadow: 0 0 10px yellow;
   }
+
+.hand-card {
+    width: 30%;
+    height: 100%;
+}
+
+@media (max-width: 1300px){
+    .hand-card {
+        width: 100%;
+        height: 100%;
+        max-width: 100px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .hand-card {
+        width: 180%;
+        height: 100%;
+    }
+    
+}

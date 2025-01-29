@@ -102,7 +102,6 @@ const YourCards = (props) => {
                       className={`hand-card ${
                         selectedCard === handCard ? "selected-card" : ""
                       }`}
-                      style={{ height: "100%", width: "30%" }}
                     />
                   ) : (
                     <div className="placeholder-card">{handCard}</div>
