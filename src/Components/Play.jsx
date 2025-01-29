@@ -76,10 +76,10 @@ const Play = () => {
       <Game players={+players} code={code} playername={playername} />
 
       <div className="your_cards">
-        {Deck.length === 0 ? (
+        {Deck.length === 1 ? (
           <div className="winning-message">
             <div>
-              🎉 The winning team is: <strong style={{ color: winningTeamColor }}>{winningTeamColor}</strong>! 🎉
+              🎉 The winning team is: <strong style={{ color: Deck[0] }}>{Deck[0]}</strong>! 🎉
             </div>
             <div className="home-button">
               <button onClick={handleGoHome} style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px" }}>

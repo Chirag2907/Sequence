@@ -26,10 +26,15 @@ const Game = (props) => {
 
   const HandleCellClick = async (cell) => {
 
+    const cardName = cell.split('-')[0]
     const currentPlayer = PlayerData[Turn % NumPlayers]?.PlayerName;
+
+    if(cardName=="J1"){
+      return;
+    }
     
     if (props.playername !== currentPlayer) {
-      toast.warn("It’s not your turn!");
+      toast.warn("It's not your turn!");
       return;
     }
 
@@ -38,16 +43,37 @@ const Game = (props) => {
       return;
     }
   
-  
-  
-    const color = colors[Turn % teams];
-  
-    // Check if the cell is already occupied
-    if (BoardMap[cell]) {
-      toast.warn("This cell is already occupied!");
-      return;
+    let color = colors[Turn % teams];
+
+    // logic for jacks
+
+    if(selectedCard == "Dj" || selectedCard == "Cj"){
+      if (BoardMap[cell]) {
+        toast.warn("This cell is already occupied!");
+        return;
+      }
+    }
+    else if(selectedCard == "Hj" || selectedCard == "Sj"){
+      if(!BoardMap[cell] || BoardMap[cell] == color) {
+        toast.warn("You cannot use this card on this cell!");
+        return;
+      }
+      else{
+        color = "none";
+      }
+    }
+    else{
+      if (BoardMap[cell]) {
+        toast.warn("This cell is already occupied!");
+        return;
+      }
+      if(cardName != selectedCard){
+        toast.warn("Click on the card you selected!");
+        return;
+      }
     }
   
+
     // Prepare updated board state
     const updatedBoardMap = { ...BoardMap, [cell]: color };
   
@@ -84,7 +110,7 @@ const Game = (props) => {
   
       if (WinCheck(color, updatedBoardMap)) {
         win(color);
-        updateDoc(gameDocRef, { Deck: [] });
+        updateDoc(gameDocRef, { Deck: [color] });
       }
     } catch (error) {
       console.error("Error updating game state:", error);
