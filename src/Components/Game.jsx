@@ -17,7 +17,8 @@ const Game = (props) => {
   const [Turn, setTurn] = useState(0);
   const [PlayerData, setPlayerData] = useState([]);
   const [BoardMap, setBoardMap] = useState({});
-  const { selectedCard, setSelectedCard } = useContext(GameContext); // Access context
+  const { selectedCard, setSelectedCard } = useContext(GameContext); 
+  const [Deck, setDeck] = useState([]);
 
   const teams = NumPlayers % 3 === 0 ? 3 : 2;
   const colors = ['red', 'blue', 'green'];
@@ -28,6 +29,10 @@ const Game = (props) => {
 
     const cardName = cell.split('-')[0]
     const currentPlayer = PlayerData[Turn % NumPlayers]?.PlayerName;
+
+    if(Deck.length == 1){
+      return;
+    }
 
     if(cardName=="J1"){
       return;
@@ -77,22 +82,32 @@ const Game = (props) => {
     // Prepare updated board state
     const updatedBoardMap = { ...BoardMap, [cell]: color };
   
-    // Update player's hand and turn
-    const updatedPlayerData = PlayerData.map((player) => {
-      if (player.PlayerName === props.playername) {
-        const updatedHand = player.Player_hand.filter((card) => card !== selectedCard);
-        if (player.Card_idx < player.Player_deck.length) {
-          updatedHand.push(player.Player_deck[player.Card_idx]);
-          player.Card_idx += 1;
-        }
-        return {
-          ...player,
-          Player_hand: updatedHand,
-          Last_card: selectedCard,
-        };
-      }
-      return player;
-    });
+// Update player's hand and turn
+const updatedPlayerData = PlayerData.map((player) => {
+  if (player.PlayerName === props.playername) {
+    // Find the index of the selected card and remove only one instance
+    const cardIndex = player.Player_hand.indexOf(selectedCard);
+    const updatedHand = [...player.Player_hand];
+    
+    // If the card exists, remove it
+    if (cardIndex !== -1) {
+      updatedHand.splice(cardIndex, 1);  // Remove only the first occurrence
+    }
+    
+    // Add a new card if there's any left in the Player_deck
+    if (player.Card_idx < player.Player_deck.length) {
+      updatedHand.push(player.Player_deck[player.Card_idx]);
+      player.Card_idx += 1;
+    }
+    
+    return {
+      ...player,
+      Player_hand: updatedHand,
+      Last_card: selectedCard,
+    };
+  }
+  return player;
+});
   
     const nextTurn = Turn + 1;
   
@@ -193,6 +208,7 @@ const Game = (props) => {
         setTurn(gameData.Turn);
         setNumPlayers(gameData.numPlayers)
         setPlayerData(gameData.Players || []);
+        setDeck(gameData.Deck);
       } else {
         console.error('Game document does not exist');
       }

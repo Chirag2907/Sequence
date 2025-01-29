@@ -15,6 +15,8 @@
   color: #333;
   text-align: center;
   max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .sample-board-1 {
@@ -39,9 +41,9 @@
   text-align: center;
   margin-top: 50px;
   font-family: Arial, sans-serif;
-  /* disable scrolling on this page */
   height:100vh;
   overflow: hidden;
+  padding: 0 15px;
 }
 
 .landing-title {
@@ -89,7 +91,9 @@ button:hover {
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 300px;
+  width: 100%;
+  max-width: 320px;
+  box-sizing: border-box;
 }
 
 .create-game-section, .join-game-section {
@@ -104,7 +108,9 @@ button:hover {
   border-radius: 5px;
   border: 1px solid #ccc;
   margin-bottom: 20px;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
+  box-sizing: border-box;
 }
 
 .start-game-btn, .join-game-btn {
@@ -116,9 +122,67 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%;
   max-width: 320px;
+  box-sizing: border-box;
 }
 
 .start-game-btn:hover, .join-game-btn:hover {
   background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .landing-title {
+    font-size: 1.5rem;
+    margin-top: 30%;
+  }
+
+  .landing-sequence {
+    font-size: 2.5rem;
+  }
+
+  .sample-board-1, .sample-board-2 {
+    opacity: 2%;
+    height: 40rem;
+    transform: rotate(0deg);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
+
+  .game-code-input, .player-select, .start-game-btn, .join-game-btn {
+    width: 90%;
+    max-width: none;
+  }
+
+  .landing-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-title {
+    font-size: 1.2rem;
+    margin-top: 50%;
+  }
+
+  .landing-sequence {
+    font-size: 1.8rem;
+  }
+
+  .waiting-message {
+    max-width: 90%;
+  }
+
+  .sample-board-1, .sample-board-2 {
+    opacity: 8%; /* Hide sample boards for small screens */
+  }
+
+  .game-code-input, .player-select, .start-game-btn, .join-game-btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }
