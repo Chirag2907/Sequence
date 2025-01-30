@@ -142,8 +142,6 @@ const LandingPage = () => {
                       Player_deck: distributedDecks[index]  // Assign the distributed deck to the Player_deck field
                   };
               });
-
-              console.log("decks: ", distributedDecks);
           
               // Update the Players field in Firebase with the new Player_deck assignments
               try {

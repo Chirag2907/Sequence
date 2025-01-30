@@ -394,7 +394,6 @@ const Game = ({ players }) => {
   };
 
   const HandleCardClick = (card) => {
-    console.log(card);
     const color = colors[Index % teams];
 
     const newBoard = Board.board.map((row) =>

@@ -25,7 +25,6 @@ const Play = () => {
     const teams = NumPlayers % 3 === 0 ? 3 : 2;
     const colors = ["red", "blue", "green"];
     const color = colors[turn % teams];
-    console.log(turn);
     return color;
   };
 

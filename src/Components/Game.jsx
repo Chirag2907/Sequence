@@ -26,7 +26,6 @@ const Game = (props) => {
   const win = (color) => toast(`${color} Team Wins!`);
 
   const HandleCellClick = async (cell) => {
-
     const cardName = cell.split('-')[0]
     const currentPlayer = PlayerData[Turn % NumPlayers]?.PlayerName;
 
@@ -51,13 +50,14 @@ const Game = (props) => {
     let color = colors[Turn % teams];
 
     // logic for jacks
-
+    //two eyed
     if(selectedCard == "Dj" || selectedCard == "Cj"){
-      if (BoardMap[cell]) {
+      if (BoardMap[cell]!="none" && BoardMap[cell]!=undefined) {
         toast.warn("This cell is already occupied!");
         return;
       }
     }
+    //one eyed
     else if(selectedCard == "Hj" || selectedCard == "Sj"){
       if(!BoardMap[cell] || BoardMap[cell] == color) {
         toast.warn("You cannot use this card on this cell!");
@@ -68,7 +68,7 @@ const Game = (props) => {
       }
     }
     else{
-      if (BoardMap[cell]) {
+      if (BoardMap[cell]!="none" && BoardMap[cell]!=undefined) {
         toast.warn("This cell is already occupied!");
         return;
       }
