@@ -7,6 +7,7 @@ import { db } from "../Firebaseconfig";
 import { BoardMap } from "../BoardMap";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onSnapshot } from 'firebase/firestore';
+import { ClipLoader } from 'react-spinners';
 
 const LandingPage = () => {
   const [numofPlayers, setNumPlayers] = useState('');
@@ -17,6 +18,7 @@ const LandingPage = () => {
   const [JoinWaitingMessage, setJoinWaitingMessage] = useState('');
   const [createWaitingMessage, setCreateWaitingMessage] = useState('');
   const [playersJoined, setPlayersJoined] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const generateDeck = () => {
     const suits = ["H", "D", "C", "S"];
@@ -62,6 +64,10 @@ const LandingPage = () => {
       error('Select number of players to create the game!');
       return;
     }
+    setLoading(true); // Start loading
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
     const generatedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     setGameCode(generatedCode);
 
@@ -89,6 +95,7 @@ const LandingPage = () => {
       await setDoc(DocRef, initial_data);
     }
     else{
+      setLoading(false); // Stop loading on error
       error('Game code already exists!');
       return;
     }
@@ -120,6 +127,7 @@ const LandingPage = () => {
         // Navigate to the play screen once all players join
         if (currentPlayers.length === parseInt(numofPlayers)) {
           setCreateWaitingMessage('');
+          setLoading(false); // Stop loading
           unsubscribe(); // Stop listening
 
           const gameDocRef = doc(db, "game", generatedCode);
@@ -160,7 +168,6 @@ const LandingPage = () => {
             console.error('Error fetching deck or distributing cards:', error);
         }
           
-
           navigate(`/play?mode=create&players=${numofPlayers}&code=${generatedCode}&name=${userName}`);
         }
       }
@@ -281,6 +288,13 @@ const LandingPage = () => {
         </div>
       )}
 
+    {loading && (
+      <div className="spinner-container">
+        <ClipLoader color="#ffffff" size={50} />
+        <p>Please Wait...</p>
+      </div>
+    )}
+
       {isCreateMode && createWaitingMessage && (
         <div className="waiting-screen">
           <div className="game-code-section">
@@ -320,9 +334,12 @@ const LandingPage = () => {
           />
           <button onClick={handleJoinGame} className="join-game-btn">Join Game</button>
           {JoinWaitingMessage && (
-          <div className="waiting-message">
+          <div>
+            <div className="waiting-message">
             {JoinWaitingMessage}
           </div>
+          </div>
+          
 )}
         </div>
       )}
