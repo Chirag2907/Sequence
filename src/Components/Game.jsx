@@ -19,6 +19,7 @@ const Game = (props) => {
   const [BoardMap, setBoardMap] = useState({});
   const { selectedCard, setSelectedCard } = useContext(GameContext); 
   const [Deck, setDeck] = useState([]);
+  const [lastPlacedToken, setLastPlacedToken] = useState(null);
 
   const teams = NumPlayers % 3 === 0 ? 3 : 2;
   const colors = ['red', 'blue', 'green'];
@@ -119,6 +120,7 @@ const updatedPlayerData = PlayerData.map((player) => {
         BoardMap: updatedBoardMap,
         Turn: nextTurn, // Atomic update of Turn
         Players: updatedPlayerData,
+        LastPlacedToken: cell, // Add the last placed token cell
       });
   
       setSelectedCard(null); // Reset selected card
@@ -209,6 +211,7 @@ const updatedPlayerData = PlayerData.map((player) => {
         setNumPlayers(gameData.numPlayers)
         setPlayerData(gameData.Players || []);
         setDeck(gameData.Deck);
+        setLastPlacedToken(gameData.LastPlacedToken || null);
       } else {
         console.error('Game document does not exist');
       }
@@ -216,8 +219,6 @@ const updatedPlayerData = PlayerData.map((player) => {
 
     return () => unsubscribe();
   }, [props.code]);
-
-  
 
   return (
     <div>
@@ -245,7 +246,7 @@ const updatedPlayerData = PlayerData.map((player) => {
                       key={`${rowIndex}-${cellIndex}`}
                       src={tokenImage}
                       alt="token"
-                      className="token"
+                      className={`token ${cell === lastPlacedToken ? 'highlight' : ''}`}
                       onClick={() => HandleCellClick(cell)}
                     />
                   );
